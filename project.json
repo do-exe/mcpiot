@@ -1,0 +1,21 @@
+{
+  "_comment": "Edit this file then run:  python generate.py",
+
+  "project": "my_esp32s3_app",
+  "board": "esp32s3",
+  "transport": {
+    "type": "uart",
+    "uart_num": 0,
+    "baud_rate": 115200,
+    "tx_pin": -1,
+    "rx_pin": -1
+  },
+
+  "modules": [
+    "chip/esp32s3/gpio_module",
+    "basic/pwm_module",
+    "chip/esp32s3/wifi_module",
+    "chip/esp32s3/adc_module",
+    "chip/esp32s3/i2c_module"
+  ]
+}

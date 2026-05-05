@@ -11,13 +11,12 @@ __pycache__/
 # VS Code workspace settings
 .vscode/
 
-# Local SDK config
+# Local SDK config (board-specific, not committed)
 sdkconfig
+sdkconfig.old
 
-# Serial/repl scripts and device probes
-# mcpiot_repl.py
+# Legacy / renamed scripts
 caplink_repl.py
-probe_device.py
 
 # Binary output
 *.bin

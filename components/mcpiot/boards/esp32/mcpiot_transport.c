@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #define MCPIOT_LINE_BUF      512
-#define MCPIOT_RX_TASK_STACK 4096
+#define MCPIOT_RX_TASK_STACK 8192   /* WiFi IDF calls need ≥6 KB stack */
 #define MCPIOT_USB_RX_BUF    512
 #define MCPIOT_USB_TX_BUF    512
 

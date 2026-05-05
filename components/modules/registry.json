@@ -1,0 +1,119 @@
+{
+  "_comment": "Master catalogue — only real implemented modules. generate.py reads this.",
+  "modules": [
+    {
+      "id": "chip/esp32s3/gpio_module",
+      "driver": "gpio_module_driver",
+      "header": "gpio_module.h",
+      "src": "chip/esp32s3/gpio_module.c",
+      "boards": ["esp32s3"],
+      "idf_requires": ["esp_driver_gpio"],
+      "methods": [
+        {
+          "name": "gpio.read",
+          "params": { "pin": "int" },
+          "help": "gpio.read <pin>  →  e.g. gpio.read 2"
+        },
+        {
+          "name": "gpio.write",
+          "params": { "pin": "int", "value": "int" },
+          "help": "gpio.write <pin> <0|1>  →  e.g. gpio.write 2 1"
+        }
+      ]
+    },
+
+    {
+      "id": "basic/pwm_module",
+      "driver": "pwm_module_driver",
+      "header": "pwm_module.h",
+      "src": "basic/pwm_module.c",
+      "boards": ["esp32s3"],
+      "idf_requires": ["esp_driver_ledc"],
+      "methods": [
+        {
+          "name": "pwm.set",
+          "params": { "pin": "int", "duty": "float", "freq": "int" },
+          "defaults": { "freq": 1000 },
+          "help": "pwm.set <pin> <duty 0-100> [freq_hz]  →  e.g. pwm.set 5 50 1000"
+        }
+      ]
+    },
+
+    {
+      "id": "chip/esp32s3/adc_module",
+      "driver": "adc_module_driver",
+      "header": "adc_module.h",
+      "src": "chip/esp32s3/adc_module.c",
+      "boards": ["esp32s3"],
+      "idf_requires": ["esp_adc"],
+      "methods": [
+        {
+          "name": "adc.read",
+          "params": { "pin": "int" },
+          "help": "adc.read <pin>  →  {pin, channel, raw 0-4095, mv}  (ADC1 only: GPIO 1-10)"
+        }
+      ]
+    },
+
+    {
+      "id": "chip/esp32s3/i2c_module",
+      "driver": "i2c_module_driver",
+      "header": "i2c_module.h",
+      "src": "chip/esp32s3/i2c_module.c",
+      "boards": ["esp32s3"],
+      "idf_requires": ["esp_driver_i2c"],
+      "methods": [
+        {
+          "name": "i2c.scan",
+          "params": { "sda": "int", "scl": "int" },
+          "timeout": 5,
+          "help": "i2c.scan <sda> <scl>  →  [{addr, hex}]  (scan 0x08..0x77)"
+        },
+        {
+          "name": "i2c.read_reg",
+          "params": { "sda": "int", "scl": "int", "addr": "int", "reg": "int", "len": "int" },
+          "help": "i2c.read_reg <sda> <scl> <addr> <reg> <len>  →  {data:[...], hex}"
+        },
+        {
+          "name": "i2c.write_reg",
+          "params": { "sda": "int", "scl": "int", "addr": "int", "reg": "int", "data": "list" },
+          "help": "i2c.write_reg <sda> <scl> <addr> <reg> <b0> [b1 ...]  →  {ok}"
+        }
+      ]
+    },
+
+    {
+      "id": "chip/esp32s3/wifi_module",
+      "driver": "wifi_module_driver",
+      "header": "wifi_module.h",
+      "src": "chip/esp32s3/wifi_module.c",
+      "boards": ["esp32s3"],
+      "idf_requires": ["esp_wifi", "esp_netif", "nvs_flash"],
+      "methods": [
+        {
+          "name": "wifi.scan",
+          "params": {},
+          "timeout": 10,
+          "help": "wifi.scan  →  [{ssid, rssi, auth}]"
+        },
+        {
+          "name": "wifi.connect",
+          "params": { "ssid": "str", "password": "str" },
+          "defaults": { "password": "" },
+          "timeout": 20,
+          "help": "wifi.connect <ssid> [password]  (omit password for open networks)"
+        },
+        {
+          "name": "wifi.status",
+          "params": {},
+          "help": "wifi.status  →  {connected, ip, ssid, rssi}"
+        },
+        {
+          "name": "wifi.disconnect",
+          "params": {},
+          "help": "wifi.disconnect  →  disconnect and stop STA"
+        }
+      ]
+    }
+  ]
+}
