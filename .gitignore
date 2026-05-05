@@ -1,0 +1,28 @@
+# ESP-IDF build artifacts
+build/
+
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code workspace settings
+.vscode/
+
+# Local SDK config
+sdkconfig
+
+# Serial/repl scripts and device probes
+# mcpiot_repl.py
+caplink_repl.py
+probe_device.py
+
+# Binary output
+*.bin
+*.elf
+*.map
+
+# Logs
+*.log
