@@ -1,0 +1,12 @@
+idf_component_register(
+    SRCS
+        "gpio_module.c"
+        "pwm_module.c"
+        "sensor_module.c"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        mcpiot
+        esp_driver_gpio
+        log
+)

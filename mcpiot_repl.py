@@ -1,6 +1,6 @@
 """
-CapLink interactive REPL
-Usage: python caplink_repl.py
+MCP-IoT interactive REPL
+Usage: python mcpiot_repl.py
 
 Shortcuts:
   mcpiot.info
@@ -8,6 +8,8 @@ Shortcuts:
   gpio.read <pin>
   gpio.write <pin> <0|1>
   adc.read <pin>
+  pwm.set <pin> <duty 0-100> [freq_hz]
+  sensor.read <type>
   Or type raw JSON: {"method":"gpio.read","params":{"pin":2}}
 
 Type 'help' for command list, 'quit' to exit.
@@ -122,10 +124,12 @@ def parse_input(text):
 
     # Shorthand param mapping
     param_map = {
-        "gpio.read":  lambda a: {"pin": int(a[0])} if a else None,
-        "gpio.write": lambda a: {"pin": int(a[0]), "value": int(a[1])} if len(a) >= 2 else None,
-        "adc.read":   lambda a: {"pin": int(a[0])} if a else None,
-        "pwm.set":    lambda a: {"pin": int(a[0]), "duty": int(a[1])} if len(a) >= 2 else None,
+        "gpio.read":    lambda a: {"pin": int(a[0])} if a else None,
+        "gpio.write":   lambda a: {"pin": int(a[0]), "value": int(a[1])} if len(a) >= 2 else None,
+        "adc.read":     lambda a: {"pin": int(a[0])} if a else None,
+        "pwm.set":      lambda a: {"pin": int(a[0]), "duty": float(a[1]),
+                                   "freq": int(a[2]) if len(a) >= 3 else 1000} if len(a) >= 2 else None,
+        "sensor.read":  lambda a: {"type": a[0]} if a else None,
     }
 
     params = None
@@ -149,12 +153,28 @@ def parse_input(text):
 HELP = f"""
 {BOLD}MCP-IoT REPL commands:{RESET}
 
-  {CYAN}mcpiot.info{RESET}              Device info
-  {CYAN}mcpiot.capabilities{RESET}      Full capability manifest
-  {CYAN}gpio.read <pin>{RESET}           Read GPIO pin (e.g. gpio.read 2)
-  {CYAN}gpio.write <pin> <0|1>{RESET}    Write GPIO pin (e.g. gpio.write 2 1)
-  {CYAN}adc.read <pin>{RESET}            Read ADC pin
-  {CYAN}pwm.set <pin> <duty>{RESET}      Set PWM duty (0-255)
+  {CYAN}mcpiot.info{RESET}                              Device info
+  {CYAN}mcpiot.capabilities{RESET}                      Full capability manifest
+
+  {BOLD}GPIO:{RESET}
+  {CYAN}gpio.read <pin>{RESET}                          Read GPIO pin       e.g. gpio.read 2
+  {CYAN}gpio.write <pin> <0|1>{RESET}                   Write GPIO pin      e.g. gpio.write 2 1
+
+  {BOLD}PWM:{RESET}
+  {CYAN}pwm.set <pin> <duty> [freq]{RESET}              Set PWM output
+    {DIM}duty{RESET}  0–100 (percent)                         e.g. pwm.set 5 50
+    {DIM}freq{RESET}  Hz, optional, default 1000 Hz           e.g. pwm.set 5 75 500
+    {DIM}Examples:{RESET}
+      pwm.set 5 0          → off
+      pwm.set 5 50         → 50% @ 1 kHz (default)
+      pwm.set 5 100        → full on
+      pwm.set 5 50 50      → 50% @ 50 Hz  (servo range)
+      pwm.set 5 75 20000   → 75% @ 20 kHz (motor/buzzer)
+
+  {BOLD}ADC / Sensor:{RESET}
+  {CYAN}adc.read <pin>{RESET}                           Read ADC pin
+  {CYAN}sensor.read <type>{RESET}                       Read sensor         e.g. sensor.read temperature
+    {DIM}types:{RESET} temperature, light, distance
 
   {DIM}Or type raw JSON:{RESET} {{"method":"gpio.read","params":{{"pin":2}}}}
 
